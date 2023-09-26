@@ -5,6 +5,11 @@ const Searchbar = ({ onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    if (query.trim() === '') {
+      return;
+    }
+    
     onSubmit(query);
     setQuery('');
   };

@@ -13,6 +13,8 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
+  const maxImages = 2700;
+  const imagesPerPage = 12; 
 
   useEffect(() => {
     if (!query) return;
@@ -20,9 +22,8 @@ function App() {
     const fetchImageData = async () => {
       setLoading(true);
       try {
-        const data = await fetchImages(query, page);
+        const data = await fetchImages(query, page, imagesPerPage);
         setImages((prevImages) => [...prevImages, ...data]);
-        setPage((prevPage) => prevPage + 1);
       } catch (error) {
         console.error('Error fetching images:', error);
       } finally {
@@ -40,7 +41,9 @@ function App() {
   };
 
   const handleLoadMore = () => {
-    setPage((prevPage) => prevPage + 1);
+    if (images.length < maxImages) {
+      setPage((prevPage) => prevPage + 1);
+    }
   };
 
   const handleImageClick = (url) => {
@@ -58,7 +61,7 @@ function App() {
       <Searchbar onSubmit={handleSearchSubmit} />
       <ImageGallery images={images} onImageClick={handleImageClick} />
       {loading && <Loader />}
-      {images.length > 0 && <Button onClick={handleLoadMore} />}
+      {images.length < maxImages && images.length > 0 && <Button onClick={handleLoadMore} />}
       {showModal && <Modal largeImageURL={selectedImage} onClose={closeModal} />}
     </div>
   );
